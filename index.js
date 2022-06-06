@@ -3,7 +3,10 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const Item = require("./models/item");
+const Item = require("./models/itemModel");
+const User = require("./models/userModel");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const { process_params } = require("express/lib/router");
 dotenv.config();
 
@@ -39,115 +42,169 @@ mongoose.connect(
   }
 );
 
+app.get("/loggedIn", async (req, res) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+
+    const validatedUser = jwt.verify(token, process.env.JWTSECRET);
+
+    const userr = await User.findById(validatedUser.user);
+
+    res.json(userr);
+  } catch (err) {
+    return res.status(400).json({ errorMessage: "אינך מחובר" });
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const { name, password } = req.body;
+
+    if (!name || !password)
+      return res
+        .status(400)
+        .json({ errorMessage: "מספר אישי או סיסמה לא התקבלו" });
+
+    const existingUser = await User.findOne({ name });
+    if (!existingUser)
+      return res.status(401).json({ errorMessage: "משתמש לא קיים" });
+
+    if (!existingUser.passwordHash)
+      return res
+        .status(401)
+        .json({ errorMessage: "סיסמתך שגויה כי אינה קיימת" });
+
+    const passwordCorrect = await bcrypt.compare(
+      password,
+      existingUser.passwordHash
+    );
+    if (!passwordCorrect)
+      return res.status(401).json({ errorMessage: "סיסמתך שגויה" });
+
+    const token = jwt.sign(
+      {
+        user: existingUser._id,
+      },
+      process.env.JWTSECRET
+    );
+
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        sameSite:
+          process.env.NODE_ENV === "development"
+            ? "lax"
+            : process.env.NODE_ENV === "production" && "none",
+        secure:
+          process.env.NODE_ENV === "development"
+            ? false
+            : process.env.NODE_ENV === "production" && true,
+      })
+      .send();
+  } catch (err) {
+    console.log(err);
+    res.status(500).send();
+  }
+});
+
+app.get("/logout", (req, res) => {
+  res
+    .cookie("token", "", {
+      httpOnly: true,
+      sameSite:
+        process.env.NODE_ENV === "development"
+          ? "lax"
+          : process.env.NODE_ENV === "production" && "none",
+      secure:
+        process.env.NODE_ENV === "development"
+          ? false
+          : process.env.NODE_ENV === "production" && true,
+      expires: new Date(0),
+    })
+    .send();
+});
+
+app.put("/changemypass", async (req, res) => {
+  try {
+    const { iMA } = req.body;
+
+    const token = req.cookies.token;
+
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+
+    const validatedUser = jwt.verify(token, process.env.JWTSECRET);
+
+    const userr = await User.findById(validatedUser.user);
+
+    const { dereg, pass, pass2 } = req.body;
+
+    if (pass.length < 1)
+      return res.status(400).json({
+        errorMessage: "לא ניתן להשתמש בסיסמה ריקה",
+      });
+
+    if (pass !== pass2)
+      return res.status(400).json({
+        errorMessage: "סיסמאות לא תואמות",
+      });
+
+    const salt = await bcrypt.genSalt();
+    const ph = await bcrypt.hash(pass, salt);
+
+    userr.passwordHash = ph;
+
+    if (dereg) userr.Dereg = dereg;
+
+    const saveduserr = await userr.save();
+
+    res.json({ SUC: "YES" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send();
+  }
+});
+
 app.get("/all", async (req, res) => {
   try {
     const items = await Item.find();
+    for (let i = 0; i < items.length; i++) {
+      let userr = await User.findById(validatedUser.user);
+      items[i].owner = userr;
+    }
     res.json(items);
   } catch (err) {
     res.status(500).send();
   }
 });
 
-app.get("/getallmy", async (req, res) => {
+app.post("/publish", async (req, res) => {
   try {
-    const pros = await Item.find();
+    const { desc, time } = req.body;
+    const token = req.cookies.token;
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+    const validatedUser = jwt.verify(token, process.env.JWTSECRET);
 
-    res.json(pros);
-  } catch (err) {
-    res.status(500).send();
-  }
-});
+    if (!desc)
+      return res.status(400).json({
+        errorMessage: "חסר תוכן",
+      });
 
-app.post("/color", async (req, res) => {
-  try {
-    const { id, i } = req.body;
-
-    const pro = await proModal.findById(id);
-
-    let wastasks = pro.tasks;
-    let task = wastasks.splice(i, 1);
-
-    let av = { name: task[0].name, complete: !task[0].complete };
-
-    wastasks.splice(i, 0, av);
-
-    const results = wastasks.filter((element) => {
-      return (
-        typeof element === "object" &&
-        !Array.isArray(element) &&
-        element !== null
-      );
+    const newItem = new Item({
+      owner: validatedUser.user,
+      desc: desc,
+      sign1: false,
+      sign2: false,
+      sign3: false,
+      time: time,
     });
 
-    pro.tasks = results;
+    const savedItem = await newItem.save();
 
-    const newaa = await pro.save();
-
-    res.json(newaa);
+    res.json(savedItem);
   } catch (err) {
     console.log(err);
     res.status(500).send();
-  }
-});
-
-app.post("/name", async (req, res) => {
-  try {
-    const { id, i, name } = req.body;
-
-    const pro = await proModal.findById(id);
-
-    let wastasks = pro.tasks;
-    let task = wastasks.splice(i, 1);
-
-    let av = { name: name, complete: false };
-
-    wastasks.splice(i, 0, av);
-
-    const results = wastasks.filter((element) => {
-      return (
-        typeof element === "object" &&
-        !Array.isArray(element) &&
-        element !== null
-      );
-    });
-
-    pro.tasks = results;
-
-    const newaa = await pro.save();
-
-    res.json(newaa);
-  } catch (err) {
-    console.log(err);
-    res.status(500).send();
-  }
-});
-
-app.post("/sendtask", async (req, res) => {
-  try {
-    const { name, id } = req.body;
-    const newa = await proModal.findById(id);
-
-    newa.tasks.push({ name: name, complete: false });
-
-    const snewa = await newa.save();
-
-    res.json(snewa);
-  } catch (err) {
-    res.status(500).send();
-    console.log(err);
-  }
-});
-
-app.post("/sendpro", async (req, res) => {
-  try {
-    const { pro } = req.body;
-
-    const newa = new proModal({ header: pro, tasks: new Array() });
-
-    const newa2 = await newa.save();
-    res.json(newa2);
-  } catch (err) {
-    res.status(500).send();
-    console.log(err);
   }
 });
