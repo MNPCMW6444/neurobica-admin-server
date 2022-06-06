@@ -14,7 +14,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://profit.neurobica.online"],
+    origin: ["https://admin.neurobica.online"],
     credentials: true,
   })
 );
