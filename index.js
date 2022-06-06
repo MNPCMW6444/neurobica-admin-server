@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const proModal = require("./models/proModal");
+const Item = require("./models/item");
 const { process_params } = require("express/lib/router");
 dotenv.config();
 
@@ -14,7 +14,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://admin.neurobica.online"],
+    origin: ["https://admin.neurobica.online", "http://localhost:3000"],
     credentials: true,
   })
 );
@@ -39,9 +39,18 @@ mongoose.connect(
   }
 );
 
+app.get("/all", async (req, res) => {
+  try {
+    const items = await Item.find();
+    res.json(items);
+  } catch (err) {
+    res.status(500).send();
+  }
+});
+
 app.get("/getallmy", async (req, res) => {
   try {
-    const pros = await proModal.find();
+    const pros = await Item.find();
 
     res.json(pros);
   } catch (err) {
