@@ -175,15 +175,18 @@ app.get("/all", async (req, res) => {
 
     const validatedUser = jwt.verify(token, process.env.JWTSECRET);
 
-    const items = await Item.find();
+    let items = await Item.find();
+    let newi;
+    let resa = new Array();
     for (let i = 0; i < items.length; i++) {
       let userr = await User.findById(validatedUser.user);
-      items[i].name = userr.name;
+      newi = items[i].toObject();
+      newi.owner = userr.name;
+      resa.push(newi);
     }
-    res.json(items);
+    res.json(resa);
   } catch (err) {
     res.status(500).send();
-    console.log(err);
   }
 });
 
