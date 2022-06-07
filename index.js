@@ -168,14 +168,21 @@ app.put("/changemypass", async (req, res) => {
 
 app.get("/all", async (req, res) => {
   try {
+    const token = req.cookies.token;
+
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+
+    const validatedUser = jwt.verify(token, process.env.JWTSECRET);
+
     const items = await Item.find();
     for (let i = 0; i < items.length; i++) {
       let userr = await User.findById(validatedUser.user);
-      items[i].owner = userr;
+      items[i].name = userr.name;
     }
     res.json(items);
   } catch (err) {
     res.status(500).send();
+    console.log(err);
   }
 });
 
