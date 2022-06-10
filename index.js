@@ -219,3 +219,23 @@ app.post("/publish", async (req, res) => {
     res.status(500).send();
   }
 });
+
+app.post("/notify", async (req, res) => {
+  try {
+    const { token2 } = req.body;
+    const token = req.cookies.token;
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+    const validatedUser = jwt.verify(token, process.env.JWTSECRET);
+
+    const userr = await User.findById(validatedUser.user);
+
+    userr.token = token2;
+
+    const savedItem = await userr.save();
+
+    res.json(savedItem);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send();
+  }
+});
