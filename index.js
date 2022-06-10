@@ -11,6 +11,8 @@ const jwt = require("jsonwebtoken");
 const { process_params } = require("express/lib/router");
 dotenv.config();
 
+const axios = require("axios");
+
 // setup express server
 
 const app = express();
@@ -196,6 +198,7 @@ app.post("/publish", async (req, res) => {
     const token = req.cookies.token;
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
     const validatedUser = jwt.verify(token, process.env.JWTSECRET);
+    const userr = await User.findById(validatedUser.user);
 
     if (!desc)
       return res.status(400).json({
@@ -212,7 +215,31 @@ app.post("/publish", async (req, res) => {
     });
 
     const savedItem = await newItem.save();
-
+    try {
+      const headers = {};
+      headers["Content-Type"] = "application/json";
+      headers["Authorization"] = `key=${process.env.AUTH_KEY_GOOGLE}`;
+      axios
+        .post(
+          "https://fcm.googleapis.com/fcm/send",
+          {
+            notification: {
+              title: "New R&S!",
+              body: userr.name + " published a new R&S!",
+            },
+            to: "dOBKsDf0NDlXDT2jTIW7Xp:APA91bE0t9-2YqGm9q5g29lTMaml6Tv4LFASe238VVZuRHgt0wGC9ij0WsJPvXww7OXGDJjVWPF9flW7XlXpU4SWiuuWyyLiVrgGxIiDG3rX38shU7YJu21-Xv5JYCByVEBrKSoqEXCn",
+          },
+          {
+            headers: headers,
+          }
+        )
+        .then((response) => {
+          // console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (e) {}
     res.json(savedItem);
   } catch (err) {
     console.log(err);
