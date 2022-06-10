@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-
+const { google } = require("googleapis");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const Item = require("./models/itemModel");
@@ -218,16 +218,19 @@ app.post("/publish", async (req, res) => {
     try {
       const headers = {};
       headers["Content-Type"] = "application/json";
-      headers["Authorization"] = `key=${process.env.AUTH_KEY_GOOGLE}`;
+      headers["Authorization"] = `Bearer ${await getAccessToken()}`;
+      //console.log(headers);
       axios
         .post(
-          "https://fcm.googleapis.com/fcm/send",
+          "https://fcm.googleapis.com/v1/projects/neurobica-admin/messages:send",
           {
-            notification: {
-              title: "New R&S!",
-              body: userr.name + " published a new R&S!",
+            message: {
+              topic: "all",
+              notification: {
+                title: "Breaking News",
+                body: "New news story available.",
+              },
             },
-            to: "dOBKsDf0NDlXDT2jTIW7Xp:APA91bE0t9-2YqGm9q5g29lTMaml6Tv4LFASe238VVZuRHgt0wGC9ij0WsJPvXww7OXGDJjVWPF9flW7XlXpU4SWiuuWyyLiVrgGxIiDG3rX38shU7YJu21-Xv5JYCByVEBrKSoqEXCn",
           },
           {
             headers: headers,
@@ -266,3 +269,23 @@ app.post("/notify", async (req, res) => {
     res.status(500).send();
   }
 });
+
+function getAccessToken() {
+  return new Promise(function (resolve, reject) {
+    const key = require("./neurobica-admin-859c021902e0.json");
+    const jwtClient = new google.auth.JWT(
+      key.client_email,
+      null,
+      key.private_key,
+      "https://www.googleapis.com/auth/firebase.messaging",
+      null
+    );
+    jwtClient.authorize(function (err, tokens) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(tokens.access_token);
+    });
+  });
+}

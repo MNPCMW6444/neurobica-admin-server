@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "neurobica-admin",
+  "private_key_id": "859c021902e0fa5880f7faea56dc9683df5e701b",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCnbAWZeplz+9ay\nIv9INcwloOboSWATqL0CDU0XeZv2nHMUQYtwlrqr9f1EbAEZjQ0Q1F26BdzON5SH\nvESNT/cmx/EOGpuyLb614z7jRMS3YL7KmGSWyaScruQ8LiCgEbbSmdLspChLvU2+\nzl4hvyJE7OEgLu5Vjmu8VJoS6TqGzVn4oknXOny/g7vJ6DICrYSX4N9MD2OnKUlx\nosyFYevhQFlb/noC2MdWmH7WnZ1JFdslmRF74ypbza1E2qlhr25PHLgIum/FkSe3\nNcZ6wJP0ynUZziyas5pNRKHDp6HXJbXZvekf9aoVybpgacLnYJoUC1qKwOpoGcVK\nnQb22lbDAgMBAAECggEAPacz8K8LL4EAMR1eMPNOuFSmc8gBj3vGDqljSE/KNWir\noDv6430+RPETUU0MoqIku5vY4BYkl/QzyEB2ZiuacjeS94So7VaXMlf64qqCXp1L\n5UN1V2nuKpzlA5xg+1FKqAdpeyeAh1Ow+6D3XSoLrqIkzTs7HVqTJglpq6kjmlwQ\nUxyu2MYtlvUZHypIsaat/0ORKGZrQEh8yAIa145eXf8vzHDM1uUwaBjOFBR1j9/R\ngkp6i70FSQ+q/YvdNMC6fDb1fzaQiIbMY+ontOJcjlLhn2J4hmBCGsS4UV0VUYwX\nF0ZVxAe3XY7PsbfQ3ZkuZNh0UIjYGUgV2CdUY3BFgQKBgQDS1sPNBCK6l//Da9Fd\n2KAALo0l87+Sx+whEMJ7LzlI0Y0RY9Nv5mp2V51sxTMh29OSY2jql9h9MvT6B/0C\neZgVTIlu75FGYnFrjd2gZEAl6+cCxoXwQlQOMNbL254qQcs78Xf7/m7jAzGipLBJ\nSrD3yU1pP8PDJS6So1BuotEJIQKBgQDLSIMNSFC83BxKzkef3sn+dhTx1y5n+mr9\n5qXcmDryOzzs60jKV6QwOgJIIqhu8utUuPsghiYz1K1LQDAAC4VQAUQSfUXuhonn\n4LhR4rcmIVV/lPD1ajTmeb6cPlMDCxowNqsRXLNFitElwC9RSe0iz7qkVgeQKuw5\nty070r7vYwKBgQCHBlmBC7v+CegXTA5abqgRVb65Zn/yzaxQhL44S8cA9orEb0zy\npfrabUP5a9VSQskdQCLp0nMnwyGWmtUS57JZOZnufOhpzhPbEJC17l4SqyBX67HN\na30PVYHKLoz9fQNeEUeJD6oOInaANb5cQcRR/A5icB679Cz+Zi7Vm9oJYQKBgFAA\neZMAosWw2nGWPRnt1BEQ561Fwj2pj/Hck+n8/zXVmmSjNEJtu3A/ZCZ/fUosz/DH\n3A0wvlgnmwvCdyGNZynVVbTxGFSHHj7jcabIUsvu0ncjZrEu2yLZRuq2nHTWKbhP\ny4NJuEPmHel9eSHEtk688fc65D8YpV8Rd/vTNNGBAoGBALn8Bsm/SQNSnU/hXdo6\nKtktmmQWLSQknAzMbWZZT/L75ChAx1huLxtQiHj4OOZZLpEiWu2q/y6AK1fYmjai\nXXL2+mwzry1ZHD+tKjao/eX1mSt2f1XuaK7Tq5/ExMbkERaSge3+2J8EYHPYZRdG\nfqCcZZjvqahi5p+LtatpxGlD\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-j434f@neurobica-admin.iam.gserviceaccount.com",
+  "client_id": "108297033590272706726",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-j434f%40neurobica-admin.iam.gserviceaccount.com"
+}
