@@ -220,28 +220,31 @@ app.post("/publish", async (req, res) => {
       headers["Content-Type"] = "application/json";
       headers["Authorization"] = `Bearer ${await getAccessToken()}`;
       //console.log(headers);
-      axios
-        .post(
-          "https://fcm.googleapis.com/v1/projects/neurobica-admin/messages:send",
-          {
-            message: {
-              topic: "all",
-              notification: {
-                title: "Breaking News",
-                body: "New news story available.",
+      const usersss = await User.find();
+      for (let i = 0; i < usersss.length; i++) {
+        axios
+          .post(
+            "https://fcm.googleapis.com/v1/projects/neurobica-admin/messages:send",
+            {
+              message: {
+                token: usersss[i].token,
+                notification: {
+                  title: "New R&S!",
+                  body: userr.name + " has published a new R&S!",
+                },
               },
             },
-          },
-          {
-            headers: headers,
-          }
-        )
-        .then((response) => {
-          // console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+            {
+              headers: headers,
+            }
+          )
+          .then((response) => {
+            // console.log(response);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     } catch (e) {}
     res.json(savedItem);
   } catch (err) {
