@@ -270,7 +270,8 @@ app.post("/notify", async (req, res) => {
       tokenar = userr.token;
       let flag = true;
       for (let i = 0; i < tokenar.length; i++) {
-        if (tokenar[i] === token2) flag = false;
+        if (tokenar[i].substring(0, 20) === token2.substring(0, 20))
+          flag = false;
       }
       if (flag) tokenar.push(token2);
       userr.token = tokenar;
