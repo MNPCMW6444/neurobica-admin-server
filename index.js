@@ -222,28 +222,31 @@ app.post("/publish", async (req, res) => {
       //console.log(headers);
       const usersss = await User.find();
       for (let i = 0; i < usersss.length; i++) {
-        axios
-          .post(
-            "https://fcm.googleapis.com/v1/projects/neurobica-admin/messages:send",
-            {
-              message: {
-                token: usersss[i].token,
-                notification: {
-                  title: "New R&S!",
-                  body: userr.name + " has published a new R&S!",
+        if (usersss[i].token)
+          for (let j = 0; j < usersss[i].token.length; j++) {
+            axios
+              .post(
+                "https://fcm.googleapis.com/v1/projects/neurobica-admin/messages:send",
+                {
+                  message: {
+                    token: usersss[i].token[j],
+                    notification: {
+                      title: "New R&S!",
+                      body: userr.name + " has published a new R&S!",
+                    },
+                  },
                 },
-              },
-            },
-            {
-              headers: headers,
-            }
-          )
-          .then((response) => {
-            // console.log(response);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+                {
+                  headers: headers,
+                }
+              )
+              .then((response) => {
+                console.log(response.data);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
       }
     } catch (e) {}
     res.json(savedItem);
@@ -262,7 +265,16 @@ app.post("/notify", async (req, res) => {
 
     const userr = await User.findById(validatedUser.user);
 
-    userr.token = token2;
+    let tokenar;
+    if (userr.token) {
+      tokenar = userr.token;
+      let flag = true;
+      for (let i = 0; i < tokenar.length; i++) {
+        if (tokenar[i] === token2) flag = false;
+      }
+      if (flag) tokenar.push(token2);
+      userr.token = tokenar;
+    } else userr.token = new Array(token2);
 
     const savedItem = await userr.save();
 
