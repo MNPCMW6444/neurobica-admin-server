@@ -65,7 +65,7 @@ app.post("/login", async (req, res) => {
   try {
     const { name, password } = req.body;
 
-    if (!name || !password)
+    if (false)
       return res
         .status(400)
         .json({ errorMessage: "מספר אישי או סיסמה לא התקבלו" });
