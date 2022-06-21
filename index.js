@@ -45,9 +45,9 @@ mongoose.connect(
   }
 );
 
-app.get("/loggedIn", async (req, res) => {
+app.get("/loggedIn/:t", async (req, res) => {
   try {
-    const token = req.cookies.token;
+    const token = req.params.t;
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -116,7 +116,7 @@ app.post("/login", async (req, res) => {
 
 app.get("/logout", (req, res) => {
   res
-    .cookie("token", "", {
+    .cookie(params, {
       httpOnly: true,
       sameSite:
         process.env.NODE_ENV === "development"
@@ -130,7 +130,7 @@ app.get("/logout", (req, res) => {
     })
     .send();
 });
-
+/* 
 app.put("/changemypass", async (req, res) => {
   try {
     const { iMA } = req.body;
@@ -169,11 +169,11 @@ app.put("/changemypass", async (req, res) => {
     console.error(err);
     res.status(500).send();
   }
-});
+}); */
 
-app.get("/all", async (req, res) => {
+app.get("/all/:t", async (req, res) => {
   try {
-    const token = req.cookies.token;
+    const token = req.params.t;
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -196,10 +196,9 @@ app.get("/all", async (req, res) => {
 
 app.post("/publish", async (req, res) => {
   try {
-    const { desc, time } = req.body;
-    const token = req.cookies.token;
-    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
-    const validatedUser = jwt.verify(token, process.env.JWTSECRET);
+    const { tok, desc, time } = req.body;
+    if (!tok) return res.status(400).json({ errorMessage: "אינך מחובר" });
+    const validatedUser = jwt.verify(tok, process.env.JWTSECRET);
     const userr = await User.findById(validatedUser.user);
 
     if (!desc)
