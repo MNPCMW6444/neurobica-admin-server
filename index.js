@@ -98,7 +98,7 @@ app.post("/login", async (req, res) => {
         httpOnly: true,
         sameSite:
           // process.env.NODE_ENV === "development" ? "lax" :
-          " lax", // BECAUSE SAFARI
+          "lax", // BECAUSE SAFARI
         /*    : process.env.NODE_ENV === "production" && "none" */ secure:
           process.env.NODE_ENV === "development"
             ? false
