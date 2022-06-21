@@ -108,7 +108,7 @@ app.post("/login", async (req, res) => {
       );
   } catch (err) {
     console.log(err);
-    res.status(500).send();
+    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
   }
 });
 
@@ -165,7 +165,7 @@ app.put("/changemypass", async (req, res) => {
     res.json({ SUC: "YES" });
   } catch (err) {
     console.error(err);
-    res.status(500).send();
+    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
   }
 }); */
 
@@ -188,7 +188,7 @@ app.get("/all/:t", async (req, res) => {
     }
     res.json(resa);
   } catch (err) {
-    res.status(500).send();
+    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
   }
 });
 
@@ -251,7 +251,7 @@ app.post("/publish", async (req, res) => {
     res.json(savedItem);
   } catch (err) {
     console.log(err);
-    res.status(500).send();
+    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
   }
 });
 
@@ -281,7 +281,7 @@ app.post("/notify", async (req, res) => {
     res.json(savedItem);
   } catch (err) {
     console.log(err);
-    res.status(500).send();
+    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
   }
 });
 
