@@ -96,7 +96,8 @@ app.post("/login", async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: true,
-        sameSite: process.env.NODE_ENV === "development" ? "lax" : "lax", // BECAUSE SAFARI
+        //process.env.NODE_ENV === "development" ? "lax" :
+        sameSite: "lax", // BECAUSE SAFARI
         /*    : process.env.NODE_ENV === "production" && "none" */ secure:
           process.env.NODE_ENV === "development"
             ? false
