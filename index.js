@@ -105,7 +105,9 @@ app.post("/login", async (req, res) => {
             ? false
             : process.env.NODE_ENV === "production" && true,
       })
-      .send({ unsec: token });
+      .send(
+        { unsec: token } ///////////////
+      );
   } catch (err) {
     console.log(err);
     res.status(500).send();
