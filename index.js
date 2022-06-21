@@ -181,6 +181,7 @@ app.get("/all", async (req, res) => {
 });
 
 app.post("/publish", async (req, res) => {
+  console.log("PUBLISH:");
   try {
     const { desc, time } = req.body;
     const token = req.cookies.token;
@@ -229,10 +230,10 @@ app.post("/publish", async (req, res) => {
                 }
               )
               .then((response) => {
-                console.log(response.data);
+                console.log("Req " + j + " is: " + Object.keys(response));
               })
               .catch((error) => {
-                console.log(error);
+                console.log("Req " + j + " is: " + Object.keys(error));
               });
           }
       }
