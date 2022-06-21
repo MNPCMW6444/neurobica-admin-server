@@ -94,7 +94,7 @@ app.post("/login", async (req, res) => {
     );
 
     res
-      /* .cookie("token", token, {
+      .cookie("token", token, {
         httpOnly: true,
         sameSite:
           process.env.NODE_ENV === "development"
@@ -104,11 +104,6 @@ app.post("/login", async (req, res) => {
           process.env.NODE_ENV === "development"
             ? false
             : process.env.NODE_ENV === "production" && true,
-      }) */
-      .cookie("token", token, {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: false,
       })
       .send();
   } catch (err) {
