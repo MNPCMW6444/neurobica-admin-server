@@ -66,9 +66,7 @@ app.post("/login", async (req, res) => {
     const { name, password } = req.body;
 
     if (!name || !password)
-      return res
-        .status(400)
-        .json({ errorMessage: "מספר אישי או סיסמה לא התקבלו" });
+      return res.status(400).json({ errorMessage: "שם או סיסמה לא התקבלו" });
 
     const existingUser = await User.findOne({ name });
     if (!existingUser)
