@@ -45,9 +45,9 @@ mongoose.connect(
   }
 );
 
-app.get("/loggedIn/:t", async (req, res) => {
+app.get("/loggedIn", async (req, res) => {
   try {
-    const token = req.params.t;
+    const token = req.cookies.token;
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -66,7 +66,9 @@ app.post("/login", async (req, res) => {
     const { name, password } = req.body;
 
     if (!name || !password)
-      return res.status(400).json({ errorMessage: "שם או סיסמה לא התקבלו" });
+      return res
+        .status(400)
+        .json({ errorMessage: "מספר אישי או סיסמה לא התקבלו" });
 
     const existingUser = await User.findOne({ name });
     if (!existingUser)
@@ -94,41 +96,27 @@ app.post("/login", async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: true,
-        sameSite:
-          process.env.NODE_ENV === "development"
-            ? "lax"
-            : process.env.NODE_ENV === "production" && "none",
-        secure:
-          process.env.NODE_ENV === "development"
-            ? false
-            : process.env.NODE_ENV === "production" && true,
+        sameSite: "none",
+        secure: true,
       })
-      .send(
-        { unsec: token } ///////////////
-      );
+      .send();
   } catch (err) {
     console.log(err);
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    res.status(500).send();
   }
 });
 
 app.get("/logout", (req, res) => {
   res
-    .cookie(params, {
+    .cookie("token", "", {
       httpOnly: true,
-      sameSite:
-        process.env.NODE_ENV === "development"
-          ? "lax"
-          : process.env.NODE_ENV === "production" && "none",
-      secure:
-        process.env.NODE_ENV === "development"
-          ? false
-          : process.env.NODE_ENV === "production" && true,
+      sameSite: "none",
+      secure: true,
       expires: new Date(0),
     })
     .send();
 });
-/* 
+
 app.put("/changemypass", async (req, res) => {
   try {
     const { iMA } = req.body;
@@ -165,13 +153,13 @@ app.put("/changemypass", async (req, res) => {
     res.json({ SUC: "YES" });
   } catch (err) {
     console.error(err);
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    res.status(500).send();
   }
-}); */
+});
 
-app.get("/all/:t", async (req, res) => {
+app.get("/all", async (req, res) => {
   try {
-    const token = req.params.t;
+    const token = req.cookies.token;
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -188,15 +176,16 @@ app.get("/all/:t", async (req, res) => {
     }
     res.json(resa);
   } catch (err) {
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    res.status(500).send();
   }
 });
 
 app.post("/publish", async (req, res) => {
   try {
-    const { tok, desc, time } = req.body;
-    if (!tok) return res.status(400).json({ errorMessage: "אינך מחובר" });
-    const validatedUser = jwt.verify(tok, process.env.JWTSECRET);
+    const { desc, time } = req.body;
+    const token = req.cookies.token;
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+    const validatedUser = jwt.verify(token, process.env.JWTSECRET);
     const userr = await User.findById(validatedUser.user);
 
     if (!desc)
@@ -251,7 +240,7 @@ app.post("/publish", async (req, res) => {
     res.json(savedItem);
   } catch (err) {
     console.log(err);
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    res.status(500).send();
   }
 });
 
@@ -281,7 +270,7 @@ app.post("/notify", async (req, res) => {
     res.json(savedItem);
   } catch (err) {
     console.log(err);
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    res.status(500).send();
   }
 });
 
