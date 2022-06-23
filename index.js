@@ -221,7 +221,7 @@ app.post("/publish", async (req, res) => {
         newItem.sign1 = true;
         break;
       case "daniel":
-        newItem.sign1 = true;
+        newItem.sign3 = true;
         break;
       default:
         break;
