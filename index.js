@@ -285,7 +285,7 @@ app.post("/sign", async (req, res) => {
         pubb.sign1 = true;
         break;
       case "daniel":
-        pubb.sign1 = true;
+        pubb.sign3 = true;
         break;
       default:
         break;
