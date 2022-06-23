@@ -255,6 +255,70 @@ app.post("/publish", async (req, res) => {
   }
 });
 
+app.post("/sign", async (req, res) => {
+  try {
+    const { id } = req.body;
+    if (!tok) return res.status(400).json({ errorMessage: "אינך מחובר" });
+    const validatedUser = jwt.verify(tok, process.env.JWTSECRET);
+    const userr = await User.findById(validatedUser.user);
+    const pubb = await User.findById(id);
+
+    switch (userr.name) {
+      case "michael":
+        pubb.sign2 = true;
+        break;
+      case "yoad":
+        pubb.sign1 = true;
+        break;
+      case "daniel":
+        pubb.sign1 = true;
+        break;
+      default:
+        break;
+    }
+    const savedItem = await pubb.save();
+
+    /* try {
+      const headers = {};
+      headers["Content-Type"] = "application/json";
+      headers["Authorization"] = `Bearer ${await getAccessToken()}`;
+      //console.log(headers);
+      const usersss = await User.find();
+      for (let i = 0; i < usersss.length; i++) {
+        if (usersss[i].token)
+          for (let j = 0; j < usersss[i].token.length; j++) {
+            axios
+              .post(
+                "https://fcm.googleapis.com/v1/projects/neurobica-admin/messages:send",
+                {
+                  message: {
+                    token: usersss[i].token[j],
+                    notification: {
+                      title: "New R&S!",
+                      body: userr.name + " has published a new R&S!",
+                    },
+                  },
+                },
+                {
+                  headers: headers,
+                }
+              )
+              .then((response) => {
+                console.log(response.data);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+      }
+    } catch (e) {} */
+    res.json(savedItem);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+  }
+});
+
 app.post("/notify", async (req, res) => {
   try {
     const { token2 } = req.body;
