@@ -213,6 +213,20 @@ app.post("/publish", async (req, res) => {
       time: time,
     });
 
+    switch (userr.name) {
+      case "michael":
+        newItem.sign2 = true;
+        break;
+      case "yoad":
+        newItem.sign1 = true;
+        break;
+      case "daniel":
+        newItem.sign1 = true;
+        break;
+      default:
+        break;
+    }
+
     const savedItem = await newItem.save();
     try {
       const headers = {};
@@ -257,11 +271,11 @@ app.post("/publish", async (req, res) => {
 
 app.post("/sign", async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id, tok } = req.body;
     if (!tok) return res.status(400).json({ errorMessage: "אינך מחובר" });
     const validatedUser = jwt.verify(tok, process.env.JWTSECRET);
     const userr = await User.findById(validatedUser.user);
-    const pubb = await User.findById(id);
+    const pubb = await Item.findById(id);
 
     switch (userr.name) {
       case "michael":
