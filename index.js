@@ -230,10 +230,36 @@ app.post("/publish", async (req, res) => {
                 }
               )
               .then((response) => {
-                console.log("Req " + j + " is: " + Object.keys(response));
+                console.log(
+                  "Req USER " +
+                    i +
+                    " (NAME: " +
+                    usersss[i].name +
+                    ") NO. " +
+                    j +
+                    " is RES: " +
+                    Object.keys(response) +
+                    "  so... the status is " +
+                    response.status +
+                    "  and the data (.name) is " +
+                    response.data.name
+                );
               })
               .catch((error) => {
-                console.log("Req " + j + " is: " + Object.keys(error));
+                console.log(
+                  "Req USER" +
+                    i +
+                    " (NAME: " +
+                    usersss[i].name +
+                    ") NO. " +
+                    j +
+                    " is ERR: " +
+                    Object.keys(error) +
+                    "  so... the keys of response are " +
+                    Object.keys(error.response) +
+                    "  and so... the status is " +
+                    error.response.status
+                );
               });
           }
       }
