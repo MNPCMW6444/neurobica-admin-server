@@ -45,9 +45,9 @@ mongoose.connect(
   }
 );
 
-app.get("/loggedIn/:t", async (req, res) => {
+app.get("/loggedIn", async (req, res) => {
   try {
-    const token = req.params.t;
+    const token = req.cookies.token;
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -66,7 +66,9 @@ app.post("/login", async (req, res) => {
     const { name, password } = req.body;
 
     if (!name || !password)
-      return res.status(400).json({ errorMessage: "שם או סיסמה לא התקבלו" });
+      return res
+        .status(400)
+        .json({ errorMessage: "מספר אישי או סיסמה לא התקבלו" });
 
     const existingUser = await User.findOne({ name });
     if (!existingUser)
@@ -94,41 +96,27 @@ app.post("/login", async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: true,
-        sameSite:
-          process.env.NODE_ENV === "development"
-            ? "lax"
-            : process.env.NODE_ENV === "production" && "none",
-        secure:
-          process.env.NODE_ENV === "development"
-            ? false
-            : process.env.NODE_ENV === "production" && true,
+        sameSite: "none",
+        secure: true,
       })
-      .send(
-        { unsec: token } ///////////////
-      );
+      .send();
   } catch (err) {
     console.log(err);
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    res.status(500).send();
   }
 });
 
 app.get("/logout", (req, res) => {
   res
-    .cookie(params, {
+    .cookie("token", "", {
       httpOnly: true,
-      sameSite:
-        process.env.NODE_ENV === "development"
-          ? "lax"
-          : process.env.NODE_ENV === "production" && "none",
-      secure:
-        process.env.NODE_ENV === "development"
-          ? false
-          : process.env.NODE_ENV === "production" && true,
+      sameSite: "none",
+      secure: true,
       expires: new Date(0),
     })
     .send();
 });
-/* 
+
 app.put("/changemypass", async (req, res) => {
   try {
     const { iMA } = req.body;
@@ -165,13 +153,13 @@ app.put("/changemypass", async (req, res) => {
     res.json({ SUC: "YES" });
   } catch (err) {
     console.error(err);
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    res.status(500).send();
   }
-}); */
+});
 
-app.get("/all/:t", async (req, res) => {
+app.get("/all", async (req, res) => {
   try {
-    const token = req.params.t;
+    const token = req.cookies.token;
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -188,15 +176,17 @@ app.get("/all/:t", async (req, res) => {
     }
     res.json(resa);
   } catch (err) {
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    res.status(500).send();
   }
 });
 
 app.post("/publish", async (req, res) => {
+  console.log("PUBLISH:");
   try {
-    const { tok, desc, time } = req.body;
-    if (!tok) return res.status(400).json({ errorMessage: "אינך מחובר" });
-    const validatedUser = jwt.verify(tok, process.env.JWTSECRET);
+    const { desc, time } = req.body;
+    const token = req.cookies.token;
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+    const validatedUser = jwt.verify(token, process.env.JWTSECRET);
     const userr = await User.findById(validatedUser.user);
 
     if (!desc)
@@ -212,20 +202,6 @@ app.post("/publish", async (req, res) => {
       sign3: false,
       time: time,
     });
-
-    switch (userr.name) {
-      case "michael":
-        newItem.sign2 = true;
-        break;
-      case "yoad":
-        newItem.sign1 = true;
-        break;
-      case "daniel":
-        newItem.sign3 = true;
-        break;
-      default:
-        break;
-    }
 
     const savedItem = await newItem.save();
     try {
@@ -254,10 +230,36 @@ app.post("/publish", async (req, res) => {
                 }
               )
               .then((response) => {
-                console.log(response.data);
+                console.log(
+                  "Req USER " +
+                    i +
+                    " (NAME: " +
+                    usersss[i].name +
+                    ") NO. " +
+                    j +
+                    " is RES: " +
+                    Object.keys(response) +
+                    "  so... the status is " +
+                    response.status +
+                    "  and the data (.name) is " +
+                    response.data.name
+                );
               })
               .catch((error) => {
-                console.log(error);
+                console.log(
+                  "Req USER" +
+                    i +
+                    " (NAME: " +
+                    usersss[i].name +
+                    ") NO. " +
+                    j +
+                    " is ERR: " +
+                    Object.keys(error) +
+                    "  so... the keys of response are " +
+                    Object.keys(error.response) +
+                    "  and so... the status is " +
+                    error.response.status
+                );
               });
           }
       }
@@ -265,71 +267,7 @@ app.post("/publish", async (req, res) => {
     res.json(savedItem);
   } catch (err) {
     console.log(err);
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
-  }
-});
-
-app.post("/sign", async (req, res) => {
-  try {
-    const { id, tok } = req.body;
-    if (!tok) return res.status(400).json({ errorMessage: "אינך מחובר" });
-    const validatedUser = jwt.verify(tok, process.env.JWTSECRET);
-    const userr = await User.findById(validatedUser.user);
-    const pubb = await Item.findById(id);
-
-    switch (userr.name) {
-      case "michael":
-        pubb.sign2 = true;
-        break;
-      case "yoad":
-        pubb.sign1 = true;
-        break;
-      case "daniel":
-        pubb.sign3 = true;
-        break;
-      default:
-        break;
-    }
-    const savedItem = await pubb.save();
-
-    /* try {
-      const headers = {};
-      headers["Content-Type"] = "application/json";
-      headers["Authorization"] = `Bearer ${await getAccessToken()}`;
-      //console.log(headers);
-      const usersss = await User.find();
-      for (let i = 0; i < usersss.length; i++) {
-        if (usersss[i].token)
-          for (let j = 0; j < usersss[i].token.length; j++) {
-            axios
-              .post(
-                "https://fcm.googleapis.com/v1/projects/neurobica-admin/messages:send",
-                {
-                  message: {
-                    token: usersss[i].token[j],
-                    notification: {
-                      title: "New R&S!",
-                      body: userr.name + " has published a new R&S!",
-                    },
-                  },
-                },
-                {
-                  headers: headers,
-                }
-              )
-              .then((response) => {
-                console.log(response.data);
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-          }
-      }
-    } catch (e) {} */
-    res.json(savedItem);
-  } catch (err) {
-    console.log(err);
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    res.status(500).send();
   }
 });
 
@@ -359,7 +297,7 @@ app.post("/notify", async (req, res) => {
     res.json(savedItem);
   } catch (err) {
     console.log(err);
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    res.status(500).send();
   }
 });
 
