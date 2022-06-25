@@ -20,7 +20,12 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://admin.neurobica.online", "http://localhost:3000"],
+    origin: [
+      "https://admin.neurobica.online",
+      "https://tests.neurobica.online",
+      "http://localhost:3000",
+      "http://localhost:3001",
+    ],
     credentials: true,
   })
 );
