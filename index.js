@@ -12,6 +12,7 @@ const { process_params } = require("express/lib/router");
 dotenv.config();
 
 const axios = require("axios");
+const e = require("express");
 
 // setup express server
 
@@ -64,6 +65,7 @@ app.get("/loggedIn", async (req, res) => {
 
     res.json(userr);
   } catch (err) {
+    console.log(err);
     return res.status(400).json({ errorMessage: "אינך מחובר" });
   }
 });
@@ -116,7 +118,7 @@ app.post("/login", async (req, res) => {
       );
   } catch (err) {
     console.log(err);
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    res.status(500).send();
   }
 });
 
@@ -172,8 +174,9 @@ app.put("/changemypass", async (req, res) => {
 
     res.json({ SUC: "YES" });
   } catch (err) {
+    console.log(err);
     console.error(err);
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    res.status(500).send();
   }
 }); */
 function removeFirstWord(str) {
@@ -212,7 +215,25 @@ app.get("/all", async (req, res) => {
     }
     res.json(resa);
   } catch (err) {
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    console.log(err);
+    res.status(500).send();
+  }
+});
+
+app.get("/myname", async (req, res) => {
+  try {
+    const token = removeFirstWord(req.headers.authorization);
+
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+
+    const validatedUser = jwt.verify(token, process.env.JWTSECRET);
+
+    const e = await User.findById(validatedUser.user);
+
+    res.json({ itis: e.name });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send();
   }
 });
 
@@ -293,7 +314,7 @@ app.post("/publish", async (req, res) => {
     res.json(savedItem);
   } catch (err) {
     console.log(err);
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    res.status(500).send();
   }
 });
 
@@ -361,7 +382,7 @@ app.post("/sign", async (req, res) => {
     res.json(savedItem);
   } catch (err) {
     console.log(err);
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    res.status(500).send();
   }
 });
 
@@ -391,7 +412,7 @@ app.post("/notify", async (req, res) => {
     res.json(savedItem);
   } catch (err) {
     console.log(err);
-    res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
+    res.status(500).send();
   }
 });
 
