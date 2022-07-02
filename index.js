@@ -298,7 +298,11 @@ app.post("/publish", async (req, res) => {
 
 app.post("/sign", async (req, res) => {
   try {
-    const { id, tok } = req.body;
+    const token = removeFirstWord(req.headers.authorization);
+
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+
+    const { id } = req.body;
     if (!tok) return res.status(400).json({ errorMessage: "אינך מחובר" });
     const validatedUser = jwt.verify(tok, process.env.JWTSECRET);
     const userr = await User.findById(validatedUser.user);
