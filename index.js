@@ -223,7 +223,6 @@ app.post("/publish", async (req, res) => {
 
     const { desc, time } = req.body;
 
-    if (!tok) return res.status(400).json({ errorMessage: "אינך מחובר" });
     const validatedUser = jwt.verify(tok, process.env.JWTSECRET);
     const userr = await User.findById(validatedUser.user);
 
