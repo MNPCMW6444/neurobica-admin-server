@@ -176,7 +176,7 @@ app.put("/changemypass", async (req, res) => {
   }
 }); */
 function removeFirstWord(str) {
-  if (!str) return null;
+  if (!str) return "";
   const indexOfSpace = str.indexOf(" ");
 
   if (indexOfSpace === -1) {
