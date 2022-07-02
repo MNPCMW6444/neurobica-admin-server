@@ -223,7 +223,7 @@ app.post("/publish", async (req, res) => {
 
     const { desc, time } = req.body;
 
-    const validatedUser = jwt.verify(tok, process.env.JWTSECRET);
+    const validatedUser = jwt.verify(token, process.env.JWTSECRET);
     const userr = await User.findById(validatedUser.user);
 
     if (!desc)
@@ -304,7 +304,7 @@ app.post("/sign", async (req, res) => {
 
     const { id } = req.body;
     if (!tok) return res.status(400).json({ errorMessage: "אינך מחובר" });
-    const validatedUser = jwt.verify(tok, process.env.JWTSECRET);
+    const validatedUser = jwt.verify(token, process.env.JWTSECRET);
     const userr = await User.findById(validatedUser.user);
     const pubb = await Item.findById(id);
 
