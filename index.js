@@ -24,6 +24,7 @@ app.use(
       "https://admin.neurobica.online",
       "https://tests.neurobica.online",
       "http://localhost:3000",
+      "http://127.0.0.1:3000",
       "http://localhost:3001",
     ],
     credentials: true,
@@ -50,7 +51,7 @@ mongoose.connect(
   }
 );
 
-app.get("/loggedIn/:t", async (req, res) => {
+app.get("/loggedIn", async (req, res) => {
   try {
     const token = req.params.t;
 
@@ -96,6 +97,7 @@ app.post("/login", async (req, res) => {
       process.env.JWTSECRET
     );
 
+    res.setHeader("x-access-token", token);
     res
       .cookie("token", token, {
         httpOnly: true,
@@ -109,7 +111,7 @@ app.post("/login", async (req, res) => {
             : process.env.NODE_ENV === "production" && true,
       })
       .send(
-        { unsec: token } ///////////////
+        { accessToken: token } ///////////////
       );
   } catch (err) {
     console.log(err);
@@ -138,7 +140,7 @@ app.put("/changemypass", async (req, res) => {
   try {
     const { iMA } = req.body;
 
-    const token = req.cookies.token;
+    const token = removeFirstWord(req.headers.authorization);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -173,14 +175,30 @@ app.put("/changemypass", async (req, res) => {
     res.status(500).send().json({ errorMessage: "שגיאה בצד שרת..." });
   }
 }); */
+function removeFirstWord(str) {
+  if (!str) return null;
+  const indexOfSpace = str.indexOf(" ");
 
-app.get("/all/:t", async (req, res) => {
+  if (indexOfSpace === -1) {
+    return "";
+  }
+
+  return str.substring(indexOfSpace + 1);
+}
+
+app.get("/all", async (req, res) => {
   try {
-    const token = req.params.t;
+    const token = removeFirstWord(req.headers.authorization);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
     const validatedUser = jwt.verify(token, process.env.JWTSECRET);
+
+    async function userrr(id) {
+      const e = await User.findById(id);
+
+      return e.name;
+    }
 
     let items = await Item.find();
     let newi;
@@ -188,7 +206,7 @@ app.get("/all/:t", async (req, res) => {
     for (let i = 0; i < items.length; i++) {
       let userr = await User.findById(validatedUser.user);
       newi = items[i].toObject();
-      newi.owner = userr.name;
+      newi.owner = await userrr(items[i].owner);
       resa.push(newi);
     }
     res.json(resa);
@@ -341,7 +359,7 @@ app.post("/sign", async (req, res) => {
 app.post("/notify", async (req, res) => {
   try {
     const { token2 } = req.body;
-    const token = req.cookies.token;
+    const token = removeFirstWord(req.headers.authorization);
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
     const validatedUser = jwt.verify(token, process.env.JWTSECRET);
 
