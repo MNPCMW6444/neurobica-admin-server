@@ -325,7 +325,6 @@ app.post("/sign", async (req, res) => {
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
     const { id } = req.body;
-    if (!tok) return res.status(400).json({ errorMessage: "אינך מחובר" });
     const validatedUser = jwt.verify(token, process.env.JWTSECRET);
     const userr = await User.findById(validatedUser.user);
     const pubb = await Item.findById(id);
