@@ -220,6 +220,30 @@ app.get("/all", async (req, res) => {
   }
 });
 
+app.get("/all2", async (req, res) => {
+  try {
+    async function userrr(id) {
+      const e = await User.findById(id);
+
+      return e.name;
+    }
+
+    let items = await Item.find();
+    let newi;
+    let resa = new Array();
+    for (let i = 0; i < items.length; i++) {
+      let userr = await User.findById(validatedUser.user);
+      newi = items[i].toObject();
+      newi.owner = await userrr(items[i].owner);
+      resa.push(newi);
+    }
+    res.json(resa);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send();
+  }
+});
+
 app.get("/myname", async (req, res) => {
   try {
     const token = removeFirstWord(req.headers.authorization);
