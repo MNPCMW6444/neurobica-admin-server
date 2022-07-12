@@ -232,7 +232,6 @@ app.get("/all2", async (req, res) => {
     let newi;
     let resa = new Array();
     for (let i = 0; i < items.length; i++) {
-      let userr = await User.findById(validatedUser.user);
       newi = items[i].toObject();
       newi.owner = await userrr(items[i].owner);
       resa.push(newi);
