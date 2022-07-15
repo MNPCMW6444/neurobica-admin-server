@@ -4,7 +4,7 @@ const taskSchema = new mongoose.Schema(
   {
     owner: { type: mongoose.Schema.Types.ObjectId, required: true },
     name: { type: String, required: true },
-    desc: { type: Boolean, required: true },
+    desc: { type: String, required: true },
     children: { type: Array, required: true },
   },
   {

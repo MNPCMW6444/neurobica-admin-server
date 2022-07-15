@@ -7,9 +7,11 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const bodyparser = require("body-parser");
 const Item = require("./models/itemModel");
+const Task = require("./models/taskModel");
 const User = require("./models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { tasks } = require("googleapis/build/src/apis/tasks");
 const vapidDetails = {
   publicKey: process.env.VAPID_PUBLIC_KEY,
   privateKey: process.env.VAPID_PRIVATE_KEY,
@@ -435,6 +437,75 @@ app.post("/notify", async (req, res) => {
     const savedItem = await userr.save();
 
     res.json(savedItem);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send();
+  }
+});
+
+app.post("/savenewtask", async (req, res) => {
+  try {
+    const token = req.headers.cookie.substring(6, req.headers.cookie.length);
+
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+
+    const validatedUser = jwt.verify(token, process.env.JWTSECRET);
+
+    const userr = await User.findById(validatedUser.user);
+
+    const { name, desc } = req.body;
+
+    const newitem = new Task({
+      owner: userr,
+      name: name,
+      desc: desc,
+      children: new Array(),
+    });
+
+    const savedItem = await newitem.save();
+
+    res.json(savedItem);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send();
+  }
+});
+
+app.post("/editnewtask", async (req, res) => {
+  try {
+    const token = req.headers.cookie.substring(6, req.headers.cookie.length);
+
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+
+    const validatedUser = jwt.verify(token, process.env.JWTSECRET);
+
+    const userr = await User.findById(validatedUser.user);
+
+    const { name, desc, id } = req.body;
+
+    const editItem = await Task.findById(id);
+
+    editItem.name = name;
+
+    editItem.desc = desc;
+
+    const savedItem = await editItem.save();
+
+    res.json(savedItem);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send();
+  }
+});
+
+app.get("/allt", async (req, res) => {
+  try {
+    const token = req.headers.cookie.substring(6, req.headers.cookie);
+
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+
+    const resa = await Task.find();
+    res.json(resa);
   } catch (err) {
     console.log(err);
     res.status(500).send();
