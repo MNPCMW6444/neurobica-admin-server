@@ -1,18 +1,21 @@
 const express = require("express");
+const webpush = require("web-push");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const { google } = require("googleapis");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const bodyparser = require("body-parser");
 const Item = require("./models/itemModel");
 const User = require("./models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { process_params } = require("express/lib/router");
+const vapidDetails = {
+  publicKey: process.env.VAPID_PUBLIC_KEY,
+  privateKey: process.env.VAPID_PRIVATE_KEY,
+  subject: process.env.VAPID_SUBJECT,
+};
 dotenv.config();
-
-const axios = require("axios");
-const e = require("express");
 
 // setup express server
 
@@ -309,7 +312,7 @@ app.post("/publish", async (req, res) => {
       for (let i = 0; i < usersss.length; i++) {
         if (usersss[i].token)
           for (let j = 0; j < usersss[i].token.length; j++) {
-            axios
+            /* axios
               .post(
                 "https://fcm.googleapis.com/v1/projects/neurobica-admin/messages:send",
                 {
@@ -330,7 +333,7 @@ app.post("/publish", async (req, res) => {
               })
               .catch((error) => {
                 console.log(error);
-              });
+              }); */
           }
       }
     } catch (e) {}
@@ -457,3 +460,69 @@ function getAccessToken() {
     });
   });
 }
+
+function sendNotifications(subscriptions) {
+  // Create the notification content.
+  const notification = JSON.stringify({
+    title: "Hello, Notifications!",
+    options: {
+      body: `ID: ${Math.floor(Math.random() * 100)}`,
+    },
+  });
+  // Customize how the push service should attempt to deliver the push message.
+  // And provide authentication information.
+  const options = {
+    TTL: 10000,
+    vapidDetails: vapidDetails,
+  };
+  // Send a push message to each client specified in the subscriptions array.
+  subscriptions.forEach((subscription) => {
+    const endpoint = subscription.endpoint;
+    const id = endpoint.substr(endpoint.length - 8, endpoint.length);
+    webpush
+      .sendNotification(subscription, notification, options)
+      .then((result) => {
+        console.log(`Endpoint ID: ${id}`);
+        console.log(`Result: ${result.statusCode}`);
+      })
+      .catch((error) => {
+        console.log(`Endpoint ID: ${id}`);
+        console.log(`Error: ${error} `);
+      });
+  });
+}
+
+app.use(bodyparser.json());
+
+app.post("/add-subscription", (request, response) => {
+  console.log(`Subscribing ${request.body.endpoint}`);
+  db.get("subscriptions").push(request.body).write();
+  response.sendStatus(200);
+});
+
+app.post("/remove-subscription", (request, response) => {
+  console.log(`Unsubscribing ${request.body.endpoint}`);
+  db.get("subscriptions").remove({ endpoint: request.body.endpoint }).write();
+  response.sendStatus(200);
+});
+
+app.post("/notify-me", (request, response) => {
+  console.log(`Notifying ${request.body.endpoint}`);
+  const subscription = db
+    .get("subscriptions")
+    .find({ endpoint: request.body.endpoint })
+    .value();
+  sendNotifications([subscription]);
+  response.sendStatus(200);
+});
+
+app.post("/notify-all", (request, response) => {
+  console.log("Notifying all subscribers");
+  const subscriptions = db.get("subscriptions").cloneDeep().value();
+  if (subscriptions.length > 0) {
+    sendNotifications(subscriptions);
+    response.sendStatus(200);
+  } else {
+    response.sendStatus(409);
+  }
+});
