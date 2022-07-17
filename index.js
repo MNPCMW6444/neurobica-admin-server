@@ -539,7 +539,15 @@ app.get("/allt", async (req, res) => {
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
-    const resa = await Task.find();
+    const resaf = await Task.find();
+    let resa = [];
+    for (let i = 0; i < resaf.length; i++) {
+      resa.push({
+        ...resaf[i].toJSON(),
+        owner: (await User.findById(resaf[i].owner.toString())).name,
+      });
+    }
+
     res.json(resa);
   } catch (err) {
     console.log(err);
