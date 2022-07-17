@@ -445,7 +445,7 @@ app.post("/notify", async (req, res) => {
 
 app.post("/savenewtask", async (req, res) => {
   try {
-    const token = req.headers.cookie.substring(6, req.headers.cookie.length);
+    const token = removeFirstWord(req.headers.authorization);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -473,7 +473,7 @@ app.post("/savenewtask", async (req, res) => {
 
 app.post("/editnewtask", async (req, res) => {
   try {
-    const token = req.headers.cookie.substring(6, req.headers.cookie.length);
+    const token = removeFirstWord(req.headers.authorization);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
