@@ -39,7 +39,7 @@ app.use(
 );
 app.use(cookieParser());
 
-const PORT = process.env.PORT || 5050;
+const PORT = process.env.PORT || 5051;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
 // set up routers
@@ -153,7 +153,7 @@ app.put("/changemypass", async (req, res) => {
       token = removeFirstWord(req.headers.authorization);
     } catch (e) {}
     if (!token)
-      token = req.headers.cookie.substring(6, req.headers.cookie.length);
+      token = req.headers.cookies.substring(6, req.headers.cookie.length);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -207,7 +207,7 @@ app.get("/all", async (req, res) => {
       token = removeFirstWord(req.headers.authorization);
     } catch (e) {}
     if (!token)
-      token = req.headers.cookie.substring(6, req.headers.cookie.length);
+      token = req.headers.cookies.substring(6, req.headers.cookie.length);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -265,7 +265,7 @@ app.get("/myname", async (req, res) => {
       token = removeFirstWord(req.headers.authorization);
     } catch (e) {}
     if (!token)
-      token = req.headers.cookie.substring(6, req.headers.cookie.length);
+      token = req.headers.cookies.substring(6, req.headers.cookie.length);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -287,7 +287,7 @@ app.post("/publish", async (req, res) => {
       token = removeFirstWord(req.headers.authorization);
     } catch (e) {}
     if (!token)
-      token = req.headers.cookie.substring(6, req.headers.cookie.length);
+      token = req.headers.cookies.substring(6, req.headers.cookie.length);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -373,7 +373,7 @@ app.post("/sign", async (req, res) => {
       token = removeFirstWord(req.headers.authorization);
     } catch (e) {}
     if (!token)
-      token = req.headers.cookie.substring(6, req.headers.cookie.length);
+      token = req.headers.cookies.substring(6, req.headers.cookie.length);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -446,7 +446,7 @@ app.post("/notify", async (req, res) => {
       token = removeFirstWord(req.headers.authorization);
     } catch (e) {}
     if (!token)
-      token = req.headers.cookie.substring(6, req.headers.cookie.length);
+      token = req.headers.cookies.substring(6, req.headers.cookie.length);
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
     const validatedUser = jwt.verify(token, process.env.JWTSECRET);
 
@@ -475,12 +475,7 @@ app.post("/notify", async (req, res) => {
 
 app.post("/savenewtask", async (req, res) => {
   try {
-    let token;
-    try {
-      token = removeFirstWord(req.headers.authorization);
-    } catch (e) {}
-    if (!token)
-      token = req.headers.cookie.substring(6, req.headers.cookie.length);
+    const token = removeFirstWord(req.body.headers.Authorization);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -508,12 +503,7 @@ app.post("/savenewtask", async (req, res) => {
 
 app.post("/editnewtask", async (req, res) => {
   try {
-    let token;
-    try {
-      token = removeFirstWord(req.headers.authorization);
-    } catch (e) {}
-    if (!token)
-      token = req.headers.cookie.substring(6, req.headers.cookie.length);
+    const token = removeFirstWord(req.body.headers.Authorization);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -545,7 +535,7 @@ app.get("/allt", async (req, res) => {
       token = removeFirstWord(req.headers.authorization);
     } catch (e) {}
     if (!token)
-      token = req.headers.cookie.substring(6, req.headers.cookie.length);
+      token = req.headers.cookies.substring(6, req.headers.cookie.length);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
