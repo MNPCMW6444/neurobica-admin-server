@@ -148,7 +148,12 @@ app.put("/changemypass", async (req, res) => {
   try {
     const { iMA } = req.body;
 
-    const token = removeFirstWord(req.headers.authorization);
+    let token;
+    try {
+      token = removeFirstWord(req.headers.authorization);
+    } catch (e) {}
+    if (!token)
+      token = req.headers.cookie.substring(6, req.headers.cookie.length);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -197,7 +202,12 @@ function removeFirstWord(str) {
 
 app.get("/all", async (req, res) => {
   try {
-    const token = removeFirstWord(req.headers.authorization);
+    let token;
+    try {
+      token = removeFirstWord(req.headers.authorization);
+    } catch (e) {}
+    if (!token)
+      token = req.headers.cookie.substring(6, req.headers.cookie.length);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -250,7 +260,12 @@ app.get("/all2", async (req, res) => {
 
 app.get("/myname", async (req, res) => {
   try {
-    const token = removeFirstWord(req.headers.authorization);
+    let token;
+    try {
+      token = removeFirstWord(req.headers.authorization);
+    } catch (e) {}
+    if (!token)
+      token = req.headers.cookie.substring(6, req.headers.cookie.length);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -267,7 +282,12 @@ app.get("/myname", async (req, res) => {
 
 app.post("/publish", async (req, res) => {
   try {
-    const token = removeFirstWord(req.headers.authorization);
+    let token;
+    try {
+      token = removeFirstWord(req.headers.authorization);
+    } catch (e) {}
+    if (!token)
+      token = req.headers.cookie.substring(6, req.headers.cookie.length);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -348,7 +368,12 @@ app.post("/publish", async (req, res) => {
 
 app.post("/sign", async (req, res) => {
   try {
-    const token = removeFirstWord(req.headers.authorization);
+    let token;
+    try {
+      token = removeFirstWord(req.headers.authorization);
+    } catch (e) {}
+    if (!token)
+      token = req.headers.cookie.substring(6, req.headers.cookie.length);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -416,7 +441,12 @@ app.post("/sign", async (req, res) => {
 app.post("/notify", async (req, res) => {
   try {
     const { token2 } = req.body;
-    const token = removeFirstWord(req.headers.authorization);
+    let token;
+    try {
+      token = removeFirstWord(req.headers.authorization);
+    } catch (e) {}
+    if (!token)
+      token = req.headers.cookie.substring(6, req.headers.cookie.length);
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
     const validatedUser = jwt.verify(token, process.env.JWTSECRET);
 
@@ -445,7 +475,12 @@ app.post("/notify", async (req, res) => {
 
 app.post("/savenewtask", async (req, res) => {
   try {
-    const token = removeFirstWord(req.headers.authorization);
+    let token;
+    try {
+      token = removeFirstWord(req.headers.authorization);
+    } catch (e) {}
+    if (!token)
+      token = req.headers.cookie.substring(6, req.headers.cookie.length);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -473,7 +508,12 @@ app.post("/savenewtask", async (req, res) => {
 
 app.post("/editnewtask", async (req, res) => {
   try {
-    const token = removeFirstWord(req.headers.authorization);
+    let token;
+    try {
+      token = removeFirstWord(req.headers.authorization);
+    } catch (e) {}
+    if (!token)
+      token = req.headers.cookie.substring(6, req.headers.cookie.length);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
@@ -500,7 +540,12 @@ app.post("/editnewtask", async (req, res) => {
 
 app.get("/allt", async (req, res) => {
   try {
-    const token = req.headers.cookie.substring(6, req.headers.cookie);
+    let token;
+    try {
+      token = removeFirstWord(req.headers.authorization);
+    } catch (e) {}
+    if (!token)
+      token = req.headers.cookie.substring(6, req.headers.cookie.length);
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
