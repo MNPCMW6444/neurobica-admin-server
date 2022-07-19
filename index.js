@@ -311,13 +311,13 @@ app.post("/publish", async (req, res) => {
     });
 
     switch (userr.name) {
-      case "michael":
+      case "Michael":
         newItem.sign2 = true;
         break;
-      case "yoad":
+      case "Yoad":
         newItem.sign1 = true;
         break;
-      case "daniel":
+      case "Daniel":
         newItem.sign3 = true;
         break;
       default:
@@ -383,13 +383,13 @@ app.post("/sign", async (req, res) => {
     const pubb = await Item.findById(id);
 
     switch (userr.name) {
-      case "michael":
+      case "Michael":
         pubb.sign2 = true;
         break;
-      case "yoad":
+      case "Yoad":
         pubb.sign1 = true;
         break;
-      case "daniel":
+      case "Daniel":
         pubb.sign3 = true;
         break;
       default:
