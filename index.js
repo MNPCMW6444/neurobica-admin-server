@@ -486,9 +486,40 @@ app.post("/savenewtask", async (req, res) => {
     const { name, desc } = req.body;
 
     const newitem = new Task({
+      isDeleted: false,
       owner: userr,
       name: name,
       desc: desc,
+      children: new Array(),
+    });
+
+    const savedItem = await newitem.save();
+
+    res.json(savedItem);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send();
+  }
+});
+
+app.post("/savesub", async (req, res) => {
+  try {
+    const token = removeFirstWord(req.body.headers.Authorization);
+
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+
+    const validatedUser = jwt.verify(token, process.env.JWTSECRET);
+
+    const userr = await User.findById(validatedUser.user);
+
+    const { name, desc, parentId } = req.body;
+
+    const newitem = new Task({
+      isDeleted: false,
+      owner: userr,
+      name: name,
+      desc: desc,
+      parentId: parentId,
       children: new Array(),
     });
 
@@ -528,6 +559,31 @@ app.post("/editnewtask", async (req, res) => {
   }
 });
 
+app.post("/deletet", async (req, res) => {
+  try {
+    const token = removeFirstWord(req.body.headers.Authorization);
+
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+
+    const validatedUser = jwt.verify(token, process.env.JWTSECRET);
+
+    const userr = await User.findById(validatedUser.user);
+
+    const { id } = req.body;
+
+    const editItem = await Task.findById(id);
+
+    editItem.isDeleted = true;
+
+    const savedItem = await editItem.save();
+
+    res.json(savedItem);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send();
+  }
+});
+
 app.get("/allt", async (req, res) => {
   try {
     let token;
@@ -539,7 +595,7 @@ app.get("/allt", async (req, res) => {
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
-    const resaf = await Task.find();
+    const resaf = await Task.find({ isDeleted: false });
     let resa = [];
     for (let i = 0; i < resaf.length; i++) {
       resa.push({
