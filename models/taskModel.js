@@ -7,6 +7,7 @@ const taskSchema = new mongoose.Schema(
     desc: { type: String, required: true },
     isDeleted: { type: Boolean, required: true },
     parentId: { type: String, required: false },
+    status: { type: String, required: false },
   },
   {
     timestamps: true,

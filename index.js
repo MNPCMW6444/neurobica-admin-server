@@ -75,6 +75,27 @@ app.get("/loggedIn", async (req, res) => {
   }
 });
 
+app.post("/status", async (req, res) => {
+  try {
+    const token = removeFirstWord(req.body.headers.Authorization);
+
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+
+    const { id } = req.body;
+
+    const editItem = await Task.findById(id);
+
+    editItem.status++;
+
+    const savedItem = await editItem.save();
+
+    res.json(savedItem);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send();
+  }
+});
+
 app.post("/login", async (req, res) => {
   try {
     const { name, password } = req.body;
