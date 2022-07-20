@@ -511,6 +511,7 @@ app.post("/savenewtask", async (req, res) => {
       owner: userr,
       name: name,
       desc: desc,
+      status: 0,
       children: new Array(),
     });
 
