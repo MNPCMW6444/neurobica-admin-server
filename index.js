@@ -9,6 +9,7 @@ const bodyparser = require("body-parser");
 const Item = require("./models/itemModel");
 const Task = require("./models/taskModel");
 const User = require("./models/userModel");
+const Time = require("./models/timeModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { tasks } = require("googleapis/build/src/apis/tasks");
@@ -617,16 +618,79 @@ app.get("/allt", async (req, res) => {
 
     if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
 
+    let mapOfPeople = [];
+
     const resaf = await Task.find({ isDeleted: false });
     let resa = [];
     for (let i = 0; i < resaf.length; i++) {
-      resa.push({
-        ...resaf[i].toJSON(),
-        owner: (await User.findById(resaf[i].owner.toString())).name,
-      });
+      console.log(i);
+      let index = false;
+      for (let j = 0; j < mapOfPeople.length; j++) {
+        if (mapOfPeople[j].id.toString() == resaf[i].owner.toString())
+          index = j;
+      }
+      if (index || index === 0)
+        resa.push({
+          ...resaf[i].toJSON(),
+          owner: mapOfPeople[index].name,
+        });
+      else {
+        // console.log("asked cause it was " + resaf[i].owner.toString());
+        // console.log("and index is " + index);
+        let name = (await User.findById(resaf[i].owner.toString())).name;
+        mapOfPeople.push({ id: resaf[i].owner.toString(), name: name });
+        resa.push({
+          ...resaf[i].toJSON(),
+          owner: name,
+        });
+      }
     }
+    console.log(mapOfPeople);
 
     res.json(resa);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send();
+  }
+});
+
+app.post("/letime", async (req, res) => {
+  try {
+    const { took } = req.body;
+
+    const newitem = new Time({
+      time: took,
+    });
+
+    const savedItem = await newitem.save();
+
+    res.json(savedItem);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send();
+  }
+});
+
+app.get("/hmtime", async (req, res) => {
+  try {
+    let token;
+    try {
+      token = removeFirstWord(req.headers.authorization);
+    } catch (e) {}
+    if (!token)
+      token = req.headers.cookies.substring(6, req.headers.cookie.length);
+
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+
+    const times = await Time.find();
+    let avg = 0;
+    for (let i = 0; i < times.length; i++) {
+      avg += times[i].time;
+    }
+
+    avg /= times.length;
+
+    res.json({ t: Math.round(avg / 1000) + 1 });
   } catch (err) {
     console.log(err);
     res.status(500).send();
