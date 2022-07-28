@@ -332,6 +332,26 @@ app.post("/publish", async (req, res) => {
       time: time,
     });
 
+    const sgMail = require("@sendgrid/mail");
+    sgMail.setApiKey(
+      "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"
+    );
+    const msg = {
+      to: "yoad12121223@gmail.com", // Change to your recipient
+      from: "service@neurobica.online", // Change to your verified sender
+      subject: "A new publicaition was made by " + validatedUser.user,
+      text: desc,
+      html: "Here we can put html!!!!",
+    };
+    sgMail
+      .send(msg)
+      .then(() => {
+        console.log("Email sent");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
     switch (userr.name) {
       case "Michael":
         newItem.sign2 = true;
