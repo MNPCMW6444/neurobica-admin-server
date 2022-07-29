@@ -338,14 +338,11 @@ app.post("/publish", async (req, res) => {
       "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"
     );
     const msg = {
-      to: "yoad12121223@gmail.com", // Change to your recipient
+      to: "founders@neurobica.online", // Change to your recipient
       from: "service@neurobica.online", // Change to your verified sender
-      subject: "A new publicaition was made by " + validatedUser.name,
+      subject: "A new publicaition was made by " + userr.name,
       text: desc,
-      html:
-        "<h1>this is h1</h1><p>this is p and the publication is:</p><p>" +
-        desc +
-        "</p>",
+      html: "<h1>The Content:</h1><p>" + desc + "</p>",
     };
     sgMail
       .send(msg)
