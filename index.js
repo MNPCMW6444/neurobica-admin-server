@@ -13,8 +13,6 @@ const Time = require("./models/timeModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { tasks } = require("googleapis/build/src/apis/tasks");
-const sgMail = require("@sendgrid/mail");
-
 const vapidDetails = {
   publicKey: process.env.VAPID_PUBLIC_KEY,
   privateKey: process.env.VAPID_PRIVATE_KEY,
@@ -334,6 +332,7 @@ app.post("/publish", async (req, res) => {
       time: time,
     });
 
+    const sgMail = require("@sendgrid/mail");
     sgMail.setApiKey(
       "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"
     );
