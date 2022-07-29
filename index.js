@@ -340,12 +340,9 @@ app.post("/publish", async (req, res) => {
     const msg = {
       to: "yoad12121223@gmail.com", // Change to your recipient
       from: "service@neurobica.online", // Change to your verified sender
-      subject: "A new publicaition was made by " + validatedUser.name,
+      subject: "A new publicaition was made by " + validatedUser.user,
       text: desc,
-      html:
-        "<h1>this is h1</h1><p>this is p and the publication is:</p><p>" +
-        desc +
-        "</p>",
+      html: "Here we can put html!!!!",
     };
     sgMail
       .send(msg)
