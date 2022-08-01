@@ -10,6 +10,7 @@ const Item = require("./models/itemModel");
 const Task = require("./models/taskModel");
 const User = require("./models/userModel");
 const Time = require("./models/timeModel");
+const TTime = require("./models/ttimeModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { tasks } = require("googleapis/build/src/apis/tasks");
@@ -480,6 +481,59 @@ app.post("/sign", async (req, res) => {
   }
 });
 
+app.post("/start", async (req, res) => {
+  try {
+    let token;
+    try {
+      token = removeFirstWord(req.headers.authorization);
+    } catch (e) {}
+    if (!token)
+      token = req.headers.cookies.substring(6, req.headers.cookie.length);
+
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+    const type = req.body.type;
+
+    const neww = new TTime({
+      startorstop: true,
+      type: type,
+      when: new Date(),
+    });
+
+    const newww = await neww.save();
+
+    res.json(newww);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send();
+  }
+});
+
+app.post("/stop", async (req, res) => {
+  try {
+    let token;
+    try {
+      token = removeFirstWord(req.headers.authorization);
+    } catch (e) {}
+    if (!token)
+      token = req.headers.cookies.substring(6, req.headers.cookie.length);
+
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+    const type = req.body.type;
+    const neww = new TTime({
+      startorstop: false,
+      type: type,
+      when: new Date(),
+    });
+
+    const newww = await neww.save();
+
+    res.json(newww);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send();
+  }
+});
+
 app.post("/notify", async (req, res) => {
   try {
     const { token2 } = req.body;
@@ -714,6 +768,90 @@ app.get("/hmtime", async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).send();
+  }
+});
+
+app.get("/getttime", async (req, res) => {
+  try {
+    let token;
+    try {
+      token = removeFirstWord(req.headers.authorization);
+    } catch (e) {}
+    if (!token)
+      token = req.headers.cookies.substring(6, req.headers.cookie.length);
+
+    if (!token) return res.status(400).json({ errorMessage: "אינך מחובר" });
+
+    const types = ["no-CTO", "Other", "Neurobica-Admin", "Neurobica-App"];
+
+    let typesreses = await Promise.all(
+      types.map(async (type) => {
+        let reses = await TTime.find({ type: type });
+
+        return {
+          type: type,
+          running:
+            reses.filter((res) => res.startorstop).length -
+              reses.filter((res) => !res.startorstop).length ===
+            1,
+          sum:
+            reses.filter((res) => res.startorstop).length -
+              reses.filter((res) => !res.startorstop).length ===
+            1
+              ? reses
+                  .filter((res) => !res.startorstop)
+                  .map((o) => o.when.getTime())
+                  .reduce(
+                    (previousValue, currentValue) =>
+                      previousValue + currentValue,
+                    0
+                  ) -
+                reses
+                  .filter((res) => res.startorstop)
+                  .map((o) => o.when.getTime())
+                  .reduce(
+                    (previousValue, currentValue) =>
+                      previousValue + currentValue,
+                    0
+                  ) -
+                reses
+                  .filter((res) => res.startorstop)
+                  [
+                    reses.filter((res) => res.startorstop).length - 1
+                  ].when.getTime()
+              : reses.filter((res) => res.startorstop).length -
+                  reses.filter((res) => !res.startorstop).length ===
+                0
+              ? reses
+                  .filter((res) => !res.startorstop)
+                  .map((o) => o.when.getTime())
+                  .reduce(
+                    (previousValue, currentValue) =>
+                      previousValue + currentValue,
+                    0
+                  ) -
+                reses
+                  .filter((res) => res.startorstop)
+                  .map((o) => o.when.getTime())
+                  .reduce(
+                    (previousValue, currentValue) =>
+                      previousValue + currentValue,
+                    0
+                  )
+              : "There is a serious and critical problem",
+        };
+      })
+    );
+
+    res.json(typesreses);
+  } catch (err) {
+    console.log(err);
+    res.json([
+      { type: "no-CTO", sum: 0 },
+      { type: "Other", sum: 0 },
+      { type: "Neurobica-Admin", sum: 0 },
+      { type: "Neurobica-App", sum: 0 },
+    ]);
   }
 });
 
