@@ -813,7 +813,7 @@ app.get("/getttime", async (req, res) => {
                     (previousValue, currentValue) =>
                       previousValue + currentValue,
                     0
-                  ) -
+                  ) +
                 reses
                   .filter((res) => res.startorstop)
                   [
