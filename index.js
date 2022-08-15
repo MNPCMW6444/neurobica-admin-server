@@ -29,14 +29,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: [
-      "https://admin.neurobica.online",
-      "https://admin.neurobica.online/",
-      "https://tests.neurobica.online",
-      "http://localhost:3000",
-      "http://127.0.0.1:3000",
-      "http://localhost:3001",
-    ],
+    origin: ["https://admin.flexboxtorchy.com", "http://localhost:3000"],
     credentials: true,
   })
 );
