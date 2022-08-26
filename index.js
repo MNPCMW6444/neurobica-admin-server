@@ -933,3 +933,13 @@ app.post("/notify-all", (request, response) => {
     response.sendStatus(409);
   }
 });
+
+router.get("/:price", async (req, res) => {
+  try {
+    const price = req.params.price;
+    console.log(price);
+    res.status(200).send();
+  } catch (err) {
+    res.status(500).send();
+  }
+});
