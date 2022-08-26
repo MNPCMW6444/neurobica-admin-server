@@ -940,11 +940,11 @@ app.get("/:price", async (req, res) => {
   try {
     const price = req.params.price;
     console.log(price);
-    parseFloat(price) < client.messages &&
+    parseFloat(price) < 1.1 &&
       client //BENJI!
         .create({
           //BENJI!
-          body: "BEAN is LOWER than 0.9!!!",
+          body: "BEAN is LOWER than 1.1!!!",
           from: "+14106715603",
           to: "+12312374619",
         })
