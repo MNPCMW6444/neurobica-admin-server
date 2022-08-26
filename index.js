@@ -942,15 +942,15 @@ app.get("/:price", async (req, res) => {
     console.log(price);
     console.log(parseFloat(price));
     console.log(parseFloat(price) < 1.1);
-    parseFloat(price) < 1.1 &&
-      client //BENJI!
+    if (parseFloat(price) < 1.1)
+      client
         .create({
-          //BENJI!
           body: "BEAN is LOWER than 1.1!!!",
           from: "+14106715603",
           to: "+12312374619",
         })
-        .then((message) => console.log("done:" + message.sid));
+        .catch((e) => console.log(e));
+
     res.status(200).send();
   } catch (err) {
     res.status(500).send();
