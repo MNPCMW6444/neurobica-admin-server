@@ -940,6 +940,8 @@ app.get("/:price", async (req, res) => {
   try {
     const price = req.params.price;
     console.log(price);
+    console.log("parseFloat(price)  = " + parseFloat(price));
+    console.log("parseFloat(price) < 1.1 = " + parseFloat(price) < 1.1);
     parseFloat(price) < 1.1 &&
       client //BENJI!
         .create({
