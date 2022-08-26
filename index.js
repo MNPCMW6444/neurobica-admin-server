@@ -15,6 +15,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { tasks } = require("googleapis/build/src/apis/tasks");
 const sgMail = require("@sendgrid/mail");
+const Twilio = require("twilio");
+
 const vapidDetails = {
   publicKey: process.env.VAPID_PUBLIC_KEY,
   privateKey: process.env.VAPID_PRIVATE_KEY,
@@ -939,8 +941,9 @@ app.get("/:price", async (req, res) => {
     const price = req.params.price;
     console.log(price);
     parseFloat(price) < client.messages &&
-      client
+      client //BENJI!
         .create({
+          //BENJI!
           body: "BEAN is LOWER than 0.9!!!",
           from: "+14106715603",
           to: "+12312374619",
@@ -952,6 +955,6 @@ app.get("/:price", async (req, res) => {
   }
 });
 
-const accountSid = "ACb56542d282e469142290abbc1c21b238";
-const authToken = "5e093feacc8d6afbc6471b70a641fa3d";
-const client = new Twilio(accountSid, authToken);
+const accountSid = "ACb56542d282e469142290abbc1c21b238"; //BENJI!
+const authToken = "5e093feacc8d6afbc6471b70a641fa3d"; //BENJI!
+const client = new Twilio(accountSid, authToken); //BENJI!
