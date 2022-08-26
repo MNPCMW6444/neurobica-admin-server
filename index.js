@@ -941,11 +941,11 @@ app.get("/:price", async (req, res) => {
     const price = req.params.price;
     console.log(price);
     console.log(parseFloat(price));
-    console.log(parseFloat(price) < 1.1);
-    if (parseFloat(price) < 1.1)
+    console.log(parseFloat(price) < 0.95);
+    if (parseFloat(price) < 0.95)
       client.messages
         .create({
-          body: "BEAN is LOWER than 1.1!!! - it is " + price,
+          body: "BEAN is LOWER than 0.95!!! - it is " + price,
           from: "+15302355598",
           to: "+12312374619",
         })
