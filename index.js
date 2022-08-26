@@ -953,7 +953,7 @@ app.get("/:price", async (req, res) => {
 
     res.status(200).send();
   } catch (err) {
-    res.status(500).send();
+    res.status(500).send(err);
   }
 });
 
