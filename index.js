@@ -943,7 +943,7 @@ app.get("/:price", async (req, res) => {
     console.log(parseFloat(price));
     console.log(parseFloat(price) < 1.1);
     if (parseFloat(price) < 1.1)
-      client
+      client.messages
         .create({
           body: "BEAN is LOWER than 1.1!!! - it is " + price,
           from: "+14106715603",
@@ -953,6 +953,7 @@ app.get("/:price", async (req, res) => {
 
     res.status(200).send();
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });
