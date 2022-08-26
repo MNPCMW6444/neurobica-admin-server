@@ -945,7 +945,7 @@ app.get("/:price", async (req, res) => {
     if (parseFloat(price) < 1.1)
       client
         .create({
-          body: "BEAN is LOWER than 1.1!!!",
+          body: "BEAN is LOWER than 1.1!!! - it is " + price,
           from: "+14106715603",
           to: "+12312374619",
         })
