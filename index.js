@@ -946,7 +946,7 @@ app.get("/:price", async (req, res) => {
       client.messages
         .create({
           body: "BEAN is LOWER than 1.1!!! - it is " + price,
-          from: "+14106715603",
+          from: "+15302355598",
           to: "+12312374619",
         })
         .catch((e) => console.log(e));
