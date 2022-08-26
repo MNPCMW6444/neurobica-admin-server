@@ -934,7 +934,7 @@ app.post("/notify-all", (request, response) => {
   }
 });
 
-router.get("/:price", async (req, res) => {
+app.get("/:price", async (req, res) => {
   try {
     const price = req.params.price;
     console.log(price);
