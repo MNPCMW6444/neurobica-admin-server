@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
-const finSchema = new mongoose.Schema(
+const expSchema = new mongoose.Schema(
   {
-    number: Number,
+    amount: Number,
     isOneTime: Boolean,
     oneTimeDate: Date,
     recTimePer: String,
@@ -16,6 +16,6 @@ const finSchema = new mongoose.Schema(
   }
 );
 
-const fin = mongoose.model("fin", finSchema);
+const exp = mongoose.model("fin", expSchema);
 
-module.exports = fin;
+module.exports = exp;
