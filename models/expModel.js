@@ -8,9 +8,9 @@ const expSchema = new mongoose.Schema(
     monthly: Boolean,
     reqTimeDay: Number,
     reqTimeMonth: Number,
-    departments: String,
+    department: String,
     more: String,
-    invoice: string,
+    invoice: { type: String, required: false },
   },
   {
     timestamps: true,

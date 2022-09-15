@@ -10,6 +10,7 @@ const Item = require("./models/itemModel");
 const Task = require("./models/taskModel");
 const User = require("./models/userModel");
 const Time = require("./models/timeModel");
+const Exp = require("./models/expModel");
 const TTime = require("./models/ttimeModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -961,3 +962,31 @@ app.get("/:price", async (req, res) => {
 const accountSid = "ACb56542d282e469142290abbc1c21b238"; //BENJI!
 const authToken = "5e093feacc8d6afbc6471b70a641fa3d"; //BENJI!
 const client = new Twilio(accountSid, authToken); //BENJI!
+
+app.post("/reqfin", async (req, res) => {
+  const {
+    amount,
+    isOneTime,
+    oneTimeDate,
+    monthly,
+    reqTimeDay,
+    reqTimeMonth,
+    department,
+    more,
+  } = req.body;
+
+  const reqtosave = new Exp({
+    amount,
+    isOneTime,
+    oneTimeDate,
+    monthly,
+    reqTimeDay,
+    reqTimeMonth,
+    department,
+    more,
+  });
+
+  const saved = await reqtosave.save();
+
+  res.json(saved);
+});
