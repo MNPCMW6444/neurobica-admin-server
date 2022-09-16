@@ -992,7 +992,7 @@ app.post("/reqfin", async (req, res) => {
 });
 
 app.get("/finnum", async (req, res) => {
-  const res = await Exp.find();
+  const re = await Exp.find();
 
-  res.json({ r: res.length });
+  res.json({ r: re.length });
 });
